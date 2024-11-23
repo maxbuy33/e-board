@@ -20,7 +20,7 @@ include 'custom_helper.php';
 $token = 'w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D';
 
 $url = 'http://localhost/e-board/api.php?token='.$token;
-$url = 'http://localhost/e-board/api.php?token='.$token.'&start=2567-11-01&end=2567-11-22';      
+//$url = 'http://localhost/e-board/api.php?token='.$token.'&start=2567-11-01&end=2567-11-22';      
 if(isset($_GET['role'])){
         $role = $_GET['role'];
       }else{
@@ -441,10 +441,7 @@ if(isset($_GET['role'])){
           var htmlResult  = "";
           var roomShow = "";
           var countData = '<?php echo $data->count ?>';
-          
-          alert(typeShow);
-          alert(role);
-          //alert(keywordsearch);
+  
           jQuery(".ShowNullData").remove();
            $.ajax({
                   method: "POST",
