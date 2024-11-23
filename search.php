@@ -13,9 +13,12 @@
             //$url = 'http://localhost/e-board/api.php?token='.$token;
 
 
-            $url = 'http://localhost/e-board/api.php?token=w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D&keyword='.$keyword;      
-            $curl = curl_init();
-
+            $url = 'http://localhost/e-board/api.php?token=w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D&keyword='.$keyword;    
+        
+            $result = getCurl($url);
+            echo  $result;
+            /*$curl = curl_init();
+            
               
             $ch = curl_init();
             // Will return the response, if false it print the response
@@ -29,7 +32,7 @@
         
         print_r ($result);
         $data = jsoninput($result);
-        //echo $data;
+        //echo $data;*/
     }else{
         
         echo "null";

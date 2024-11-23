@@ -83,8 +83,10 @@ $token = "w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D";
         if($now == $value['appointmentdate']) {
             $data['date']  =  $value['appointmentdate'];
         }else{
-            $data['startTime'] =  $startdate;
-            $data['endTime'] =  $enddate;
+            if(!empty($startdate) && !empty($enddate)){
+                $data['startTime'] =  $startdate;
+                $data['endTime'] =  $enddate;
+            }
         }
         $data['count'] = $rowcount;
         $data['status'] = true;

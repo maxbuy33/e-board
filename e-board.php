@@ -11,110 +11,29 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    
-    
-    
-
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> 
 </head>
 <body>
-    
-     
-
-  <div class="container my-4">
-      
-      
-   <!--------------------------------------------------------------------->      
-    <!--<div class="row">
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          <div class="card-header">
-            <h5>Board Title 1</h5>
-          </div>
-          <div class="card-body">
-            <h6 class="card-title">รายละเอียด</h6>
-            <p class="card-text">ข้อมูลหรือข้อความที่ต้องการแสดงบน board นี้.</p>
-            <a href="#" class="btn btn-primary">ดูรายละเอียด</a>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          <div class="card-header">
-            <h5>Board Title 2</h5>
-          </div>
-          <div class="card-body">
-            <h6 class="card-title">รายละเอียด</h6>
-            <p class="card-text">ข้อมูลหรือข้อความที่ต้องการแสดงบน board นี้.</p>
-            <a href="#" class="btn btn-primary">ดูรายละเอียด</a>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          <div class="card-header">
-            <h5>Board Title 3</h5>
-          </div>
-          <div class="card-body">
-            <h6 class="card-title">รายละเอียด</h6>
-            <p class="card-text">ข้อมูลหรือข้อความที่ต้องการแสดงบน board นี้.</p>
-            <a href="#" class="btn btn-primary">ดูรายละเอียด</a>
-          </div>
-        </div>
-      </div>
-    </div>-->
-   <!--------------------------------------------------------------------->          
 <?php 
 include 'custom_helper.php';      
 
 $token = 'w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D';
 
 //$url = 'http://localhost/e-board/api.php?token='.$token;
-      
-      
-$url = 'http://localhost/e-board/api.php?token=w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D&start=2567-11-01&end=2567-11-22';      
-$curl = curl_init();
-
-      if(isset($_GET['role'])){
+      $url = 'http://localhost/e-board/api.php?token='.$token.'&start=2567-11-01&end=2567-11-22';      
+if(isset($_GET['role'])){
         $role = $_GET['role'];
       }else{
           $role = "";
       }
-      
-      
+
       if($role != "staff"){
         $role  = "user";
       }
- 
-//  Initiate curl
-$ch = curl_init();
-// Will return the response, if false it print the response
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-// Set the url
-curl_setopt($ch, CURLOPT_URL,$url);
-// Execute
-$result=curl_exec($ch);
-// Closing
-curl_close($ch);
+        $result = getCurl($url); //ลิงค์ไปยัง API เพื่อรับข้อมูล
+        $data = jsoninput($result);
+        $countloop = 1;
 
-      
-$data = jsoninput($result);
-$countloop = 1;
-   //echo "<pre>";
-   //print_r ($data);
-   /*if($data->status == "No Data"){
-        $typeShow = "null";   
-   }*/
-      
-
-
-// Will dump a beauty json :3
-//var_dump(json_decode($result, true));
     if(!empty($data->startTime) || !empty($data->endTime) ){
          $dateStart =explode("-",$data->startTime);
         
@@ -152,7 +71,13 @@ $countloop = 1;
 
 
 
-?>      
+?>         
+     
+
+  <div class="container my-4">
+      
+  
+
 
     <!-- ตารางแสดงข้อมูลบน board -->
     <div class="row" >
@@ -228,9 +153,9 @@ $countloop = 1;
         </div>    
             
           <div class="card-body">
-              
+            <span id="noShowData"></span> 
 
-            <table class="table table-striped table-hover" style="font-size:85%;">
+            <table class="table table-striped table-hover tabledata" style="font-size:85%;">
                 <?php if($role == "staff"){ ?>
                         <button type="button" class="btn btn-primary peopleContact" data-toggle="modal" data-target="#exampleModal"  data-numberBlack="-" >ประชาชนติดต่อศาล</button>
                     <?php } ?>
@@ -255,7 +180,7 @@ $countloop = 1;
                 </tr>
               </thead>
                 <?php } ?>
-              <tbody>
+              <tbody id="showDataResult">
                 <?php  
                         if($data->count > 0){
                             foreach($data->value as $key=> $value){  ?>
@@ -298,18 +223,29 @@ $countloop = 1;
                         <?php  $countloop++;
                             }
                         }else{
-                            
-                            echo "ไม่มีการนัดพิจารณาคดี";
+                          
+                        echo       '<div class="card text-center">
+                                        <div class="card-body">
+                                            <h5 class="card-title">ไม่มีการนัดพิจารณตดี</h5>
+                                            <p class="card-text">ขออภัย ไม่มีข้อมูลที่คุณต้องการในขณะนี้</p>
+                                        </div>
+                                    </div>';
                         }
                   ?>
     
+                
+
+       
+ 
+                
+                
               </tbody>
             </table>
           </div>
             
-                <div class="card-header">
+               <!-- <div class="card-header">
                     <h5 style="color:red"> นัดเพิ่มเติม (เร่งด่วน) ประจำวัน <?php  echo $dateShow ; ?>  </h5>
-                </div>
+                </div>-->
         </div>
       
    
@@ -499,13 +435,28 @@ $countloop = 1;
           
           var keywordsearch  = jQuery('#txtsearch').val();
           //alert(keywordsearch);
+          jQuery(".ShowNullData").remove();
            $.ajax({
                   method: "POST",
                   url: "search.php",
                   data: {keyword:keywordsearch}
                 })
                   .done(function( msg ) {
-                    console.log(msg);
+                    var result = JSON.parse(msg);
+                    console.log(result);
+                    var count = result['count']
+                        if(count > 0 && result['status'] == true){
+                           jQuery("#showDataResult").parent('tr').remove();
+                        }else{
+                          jQuery(".tabledata").fadeOut();
+                          var HtmlShowNoData = '<div class="card text-center ShowNullData">';  
+                              HtmlShowNoData += '<div class="card-body">';
+                              HtmlShowNoData += '<h5 class="card-title">ไม่มีการนัดพิจารณตดี</h5>';
+                              HtmlShowNoData += '<p class="card-text">ขออภัย ไม่มีข้อมูลที่คุณต้องการในขณะนี้</p>';
+                              HtmlShowNoData += '</div></div>';    
+                            jQuery(".tabledata").fadeOut();
+                            jQuery("#noShowData").html(HtmlShowNoData);
+                        }
                   });
           
           
