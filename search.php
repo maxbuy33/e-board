@@ -2,18 +2,18 @@
     include 'custom_helper.php';
     include 'config.php';
 
-    $keyword =  $_POST['keyword'];
-    if(!empty($keyword)){
+    $keyword =  input($_POST['keyword']);
+    $typeShow =  $_POST['typeShow'];
+    $role = input($_POST['role']);
+     if(!empty($keyword)){
         
         $keyword = input($keyword);
-        
-        
         $token = 'w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D';
 
             //$url = 'http://localhost/e-board/api.php?token='.$token;
 
 
-            $url = 'http://localhost/e-board/api.php?token=w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D&keyword='.$keyword;    
+            $url = 'http://localhost/e-board/api.php?token=w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D&keyword='.$keyword.'&typeShow='.$typeShow.'&role='.$role;    
         
             $result = getCurl($url);
             echo  $result;

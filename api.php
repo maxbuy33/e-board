@@ -62,7 +62,17 @@ $token = "w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D";
             
             if(!empty($_GET['keyword'])){
                 $keyword =  $_GET['keyword'];
-                $where .= "and numberblack like  '%$keyword%'  or appointmentdate  like '%$keyword%' or  prosecutorName  like '%$keyword%'  ";   
+                $typeShow = input($_GET['typeShow']);
+                $role  = input($_GET['role']);
+                if($role == "user"){
+                    $where = "appointmentdate = '".$now."' ";
+                    $where .= "or numberblack like  '%$keyword%'  and appointmentdate  like '%$keyword%' and  prosecutorName  like '%$keyword%'  ";   
+                }else{
+                    //$where = "appointmentdate = '".$now."' ";
+                    $where .= "and numberblack like  '%$keyword%'  or appointmentdate  like '%$keyword%' or  prosecutorName  like '%$keyword%'  ";
+                    
+                }
+                
             }
             
         }
@@ -73,6 +83,7 @@ $token = "w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D";
    
 
     $select = "select * from  appointment where ". $where ;
+    //echo $select;
     $result = mysqli_query($conn,$select);
     $rowcount=mysqli_num_rows($result);
 

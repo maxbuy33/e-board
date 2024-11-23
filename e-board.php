@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML…3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -19,8 +19,8 @@ include 'custom_helper.php';
 
 $token = 'w4axtpra8xImQSLzk612uV15aVqS33bBGSHPCe3C5HT4Hsoi4tDxbsQIeHGuuB6D';
 
-//$url = 'http://localhost/e-board/api.php?token='.$token;
-      $url = 'http://localhost/e-board/api.php?token='.$token.'&start=2567-11-01&end=2567-11-22';      
+$url = 'http://localhost/e-board/api.php?token='.$token;
+$url = 'http://localhost/e-board/api.php?token='.$token.'&start=2567-11-01&end=2567-11-22';      
 if(isset($_GET['role'])){
         $role = $_GET['role'];
       }else{
@@ -158,6 +158,8 @@ if(isset($_GET['role'])){
             <table class="table table-striped table-hover tabledata" style="font-size:85%;">
                 <?php if($role == "staff"){ ?>
                         <button type="button" class="btn btn-primary peopleContact" data-toggle="modal" data-target="#exampleModal"  data-numberBlack="-" >ประชาชนติดต่อศาล</button>
+                        <br>
+                        <br>
                     <?php } ?>
                 
              <?php if( $data->count > 0 ) { ?>
@@ -180,7 +182,7 @@ if(isset($_GET['role'])){
                 </tr>
               </thead>
                 <?php } ?>
-              <tbody id="showDataResult">
+              <tbody id="showData">
                 <?php  
                         if($data->count > 0){
                             foreach($data->value as $key=> $value){  ?>
@@ -194,11 +196,11 @@ if(isset($_GET['role'])){
                               </td>
                                  <?php } ?>
                                 
-                              <td class="fs-6 fs-md-5"><?php echo  $value->numberBlack; ?></td>
-                              <td class="fs-6 fs-md-5" ><?php echo  $value->prosecutorName; ?></td>
-                              <td class="fs-6 fs-md-5" ><?php echo  $value->accusedName; ?></td>
+                              <td class="fs-6 fs-md-5 showDataResult"><?php echo  $value->numberBlack; ?></td>
+                              <td class="fs-6 fs-md-5 showDataResult" ><?php echo  $value->prosecutorName; ?></td>
+                              <td class="fs-6 fs-md-5 showDataResult" ><?php echo  $value->accusedName; ?></td>
                              <?php if($typeShow == "between"){ ?>
-                              <td class="fs-6 fs-md-5"><?php 
+                              <td class="fs-6 fs-md-5 showDataResult"><?php 
                                         $dataAppointmentdate =explode("-",$value->appointmentdate);
                                         $day =   $dataAppointmentdate[2];
                                         $month = month_thaiShort($dataAppointmentdate[1]);
@@ -208,23 +210,23 @@ if(isset($_GET['role'])){
                                  ?>
                                 </td>
                                 <?php } ?>    
-                                
-                              <td class="fs-6 fs-md-5"><?php echo  $value->timeappointment; ?></td>
-                              <td class="fs-6 fs-md-5"><?php 
+                                 
+                              <td class="fs-6 fs-md-5 showDataResult "><?php echo  $value->timeappointment; ?></td>
+                              <td class="fs-6 fs-md-5 showDataResult"><?php 
                                         if($value->bench == 0){
                                             echo "ห้องพิจารณาไกล่เกลี่ย ชั้น 2 ";
                                         }else{
                                              echo  $value->bench; 
                                         } ?>
                               </td>
-                              <td class="fs-6 fs-md-5"><?php echo  $value->whyappointment; ?></td>
+                              <td class="fs-6 fs-md-5 showDataResult"><?php echo  $value->whyappointment; ?></td>
                                
                             </tr>
                         <?php  $countloop++;
                             }
                         }else{
                           
-                        echo       '<div class="card text-center">
+                        echo       '<div class="card text-center ShowNullData">
                                         <div class="card-body">
                                             <h5 class="card-title">ไม่มีการนัดพิจารณตดี</h5>
                                             <p class="card-text">ขออภัย ไม่มีข้อมูลที่คุณต้องการในขณะนี้</p>
@@ -432,21 +434,103 @@ if(isset($_GET['role'])){
       
       
       jQuery('#btnsearch').click(function(){
-          
+         
           var keywordsearch  = jQuery('#txtsearch').val();
+          var typeShow = '<?php echo $typeShow; ?>';
+          var role = "<?php echo  $role; ?>";
+          var htmlResult  = "";
+          var roomShow = "";
+          var countData = '<?php echo $data->count ?>';
+          
+          alert(typeShow);
+          alert(role);
           //alert(keywordsearch);
           jQuery(".ShowNullData").remove();
            $.ajax({
                   method: "POST",
                   url: "search.php",
-                  data: {keyword:keywordsearch}
+                 
+                  data: {keyword:keywordsearch,typeShow:typeShow,role:role}
                 })
                   .done(function( msg ) {
                     var result = JSON.parse(msg);
                     console.log(result);
                     var count = result['count']
                         if(count > 0 && result['status'] == true){
-                           jQuery("#showDataResult").parent('tr').remove();
+                            jQuery("#noShowData").fadeOut().remove();
+                        
+                           jQuery(".showDataResult").fadeOut().remove();
+                             var   obj = result['value'];
+                            
+                            if(countData == 0){
+                                    htmlResult += '<thead style="text-align: center;" class="table-dark" >'
+                                  htmlResult += '<tr >'
+                                  if(role == "staff"){
+                                     htmlResult += '<th>ดำเนินการ</th>'
+                                  
+                                  }
+                                  htmlResult += '<th>เลขคดีดำ</th>'
+                                  htmlResult += '<th>โจทก์</th>'
+                                  htmlResult += '<th>จำเลย</th>'
+                                  if(typeShow == "between" || role == "staff" ){
+                                      htmlResult+= '<th>วันนัด</th>'
+                                  }
+                                    htmlResult+= '<th>เวลานัด</th>'
+                                    htmlResult+= '<th>ห้องพิจารณาคดี</th>'
+                                    htmlResult+= '<th>กระบวนการพิจารณคดี</th>'
+                                    htmlResult+= '</tr></thead>'
+                                } 
+                                htmlResult +='<tr>'
+                              Object.keys(obj).forEach(function(key) {
+                              
+                                /*console.log (obj[key]['numberBlack']);
+                                console.log (obj[key]['accusedName']);
+                                console.log (obj[key]['appointmentdate']);
+                                console.log (obj[key]['bench']);
+                                 console.log (obj[key]['prosecutorName']);
+                                console.log (obj[key]['timeappointment']);
+                                console.log (obj[key]['whyappointment']);*/
+                                  
+                                  
+                                  
+                                  
+                                 
+
+                                if(role == "staff"){
+                                    
+                                    htmlResult += '<td>'
+                                    htmlResult += '<button class=" btn btn-success btn-sm alert" data-numberBlack="'+obj[key]['numberBlack']+'" data-toggle="modal" data-target="#exampleModal">'
+                                    htmlResult += 'แจ้งมาติดต่อ'
+                                    htmlResult += '</button>'
+                                    htmlResult += '</td>'
+                                }                                
+                                    htmlResult += '<td class="fs-6 fs-md-5 showDataResult">'+obj[key]['numberBlack']+'</td>';
+                                    htmlResult += '<td class="fs-6 fs-md-5 showDataResult" >'+obj[key]['prosecutorName']+'</td>';
+                                    htmlResult += '<td class="fs-6 fs-md-5 showDataResult" >'+obj[key]['accusedName']+'</td>';
+                                if(typeShow == "between" || role=="staff"){
+                                    
+        
+                                    htmlResult += '<td class="fs-6 fs-md-5 showDataResult">'+obj[key]['appointmentdate']+'</td>';
+                                }
+                                    htmlResult += '<td class="fs-6 fs-md-5 showDataResult ">'+obj[key]['timeappointment']+'</td>';
+                                    
+                                    if(obj[key]['bench'] == 0) {
+                                        
+                                        roomShow = 'ห้องพิจารณาไกล่เกลี่ย ชั้น 2';
+                                    }else{
+                                        
+                                        roomShow =  obj[key]['bench'];
+                                    }
+                                     htmlResult += '<td class="fs-6 fs-md-5 showDataResult ">'+roomShow+'</td>';
+                                    htmlResult += '<td class="fs-6 fs-md-5 showDataResult ">'+obj[key]['whyappointment']+'</td>';
+                                    htmlResult += '</tr>';
+                                    jQuery("#showData").html(htmlResult);
+                                
+                                
+                                
+                                //console.log(key, obj[key]);
+                            });
+
                         }else{
                           jQuery(".tabledata").fadeOut();
                           var HtmlShowNoData = '<div class="card text-center ShowNullData">';  
