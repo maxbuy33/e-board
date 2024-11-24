@@ -4,7 +4,7 @@
     $numberBlack = $_POST['numberBlack'];
     $roomSelect = $_POST['roomSelect'];
 
-    $message = " คุณ  :".$name."\n หมายเลขคดี :".$numberBlack."\n มาในฐานะ ".$typeContact."\n ติดต่อ ".$roomSelect;    
+    $message = " คุณ  :".$name."\n หมายเลขคดี :".$numberBlack."\n ผู้มาติดต่อในฐานะ : ".$typeContact."\n ติดต่อกลุ่มงาน : ".$roomSelect;    
 
 
 

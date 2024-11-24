@@ -14,6 +14,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> 
 </head>
 <body>
+<style>
+
+    .video-container {
+      max-width: 100%;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    video {
+      width: 100%;
+      border-radius: 8px;
+    }
+</style>
 <?php 
 include 'custom_helper.php';      
 
@@ -62,7 +79,7 @@ if(isset($_GET['role'])){
             $typeShow ="null";
             $day =   date("d");
             $month = month_thai(date("m"));
-            $years = date("y");
+            $years = date("Y")+543;
             $dateShow = "ประจำวัน ".$day.' '.$month.' '.$years;
             
         }
@@ -90,7 +107,7 @@ if(isset($_GET['role'])){
                      <?php if($role == "staff"){ ?>
                     <!-- ปุ่ม Login -->
                      <div style="position: relative;text-align: right;">     
-                        <button class="btn btn-outline-light btn-sm" >
+                        <button class="btn btn-outline-light btn-sm btnlogin"  type="button" data-toggle="modal" data-target="#modal2" >
                           <i class="bi bi-box-arrow-in-right"></i> เข้าสู่ระบบ
                         </button>
                     </div>
@@ -248,6 +265,14 @@ if(isset($_GET['role'])){
                <!-- <div class="card-header">
                     <h5 style="color:red"> นัดเพิ่มเติม (เร่งด่วน) ประจำวัน <?php  echo $dateShow ; ?>  </h5>
                 </div>-->
+
+                    <div class="video-container">
+                        <button id="unmuteButton" class="btn btn-success">เปิดเสียง</button>
+                        <video controls autoplay muted id="videoPlayer">
+                          <source src="video/PresidentPolicy.mp4" type="video/mp4">
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
         </div>
       
    
@@ -255,7 +280,7 @@ if(isset($_GET['role'])){
 
     
     
-<!-- POP UP Alert -->    
+<!-- POP UP Alert แจ้งเตือนไปยังเจ้าหน้าที่ -->    
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -358,26 +383,39 @@ if(isset($_GET['role'])){
 <!--POP UP Login -->
 
 <!-- Modal -->
-  <div class="modal fade" id="loginModal" tabindex="-2"  role="dialog"  aria-labelledby="loginModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="loginModalLabel">Login</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span> <!-- เครื่องหมาย X -->
+        </button>
         </div>
         <div class="modal-body">
           <!-- Login Form -->
-          <form>
-            <div class="mb-3">
-              <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" placeholder="Enter username">
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" placeholder="Enter password">
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-          </form>
+            <div class="login-container">
+                <h5 class="text-center mb-4">Login</h5>
+                <form>
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username">
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password">
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                  <p class="mb-1">Or login with</p>
+                  <div class="logo-buttons">
+                    <a href="#"><img src="img/ThaiID.png" alt="ThaiID" width="45" height="45"></a>
+                    <a href="#"><img src="img/COJ_logo.png" alt="COJ Connect" width="45" height="45"></a>
+                  </div>
+                </div>
+              </div>
+
         </div>
       </div>
     </div>
@@ -395,10 +433,41 @@ if(isset($_GET['role'])){
 <script>
   jQuery( document ).ready(function() {
       
+         jQuery('#unmuteButton').click(function () {
+            const video = $('#videoPlayer')[0]; // ดึง <video> ออกมา
+             video.muted = false; // ปิด mute
+            video.volume = 0.5; // ตั้งระดับเสียงเป็น 100%
+            jQuery(this).text('Sound On'); // เปลี่ยนข้อความปุ่ม
+            jQuery(this).prop('disabled', true); // ปิดใช้งานปุ่มหลังเปิดเสียง
+      });
+      
         jQuery(".alert, .peopleContact").click(function(){
             
          var numberBlack = jQuery(this).attr("data-numberBlack" );
             jQuery("#inputNumberBlack").val(numberBlack);
+        })
+      
+          jQuery(document).on('click', '.alert', function () {
+             var numberBlack = jQuery(this).attr("data-numberBlack" );
+            jQuery("#inputNumberBlack").val(numberBlack);
+        });
+      
+        jQuery(".btnlogin").click(function(){
+                /*jQuery('body').attr('class','model-open');
+                jQuery('.login').attr('class','modal fade login show');
+                jQuery('.login').attr('role','dialog');
+                jQuery('.login').css('style','display:block');*/
+            
+            
+                    jQuery('.login').preventDefault();
+                  dataModal = jQuery('.login').attr("data-modal");
+                  jQuery('.login').css({"display":"block"});
+              /*var actualModal = jQuery('#loginModal').attr('data-actual');
+              var newModal = jQuery('#loginModal').attr('data-target');
+                console.log(actualModal);
+                jQuery(actualModal).modal('hide');
+                jQuery(newModal).modal('show');
+                alert('login');*/
         })
      
        jQuery('.dropdown-toggle').dropdown()
